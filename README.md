@@ -4,13 +4,13 @@ La siguiente información está detallada en la sección de [Wallet](https://doc
 ### Crear una wallet con el método createRandom()
 
 Partiendo del siguiente código:
-```
-    const ethers = require('ethers')
-    const wallet = ethers.Wallet.createRandom()
+```javascript
+const ethers = require('ethers')
+const wallet = ethers.Wallet.createRandom()
 ```
 podemos crear una wallet y obtener su **address**, **mnemonic**, **private key** y **public key**.
 
-```
+```javascript
 console.log('address:', wallet.address);
 //address: 0x71CB05EE1b1F506fF321Da3dac38f25c0c9ce6E1
 
@@ -26,6 +26,24 @@ console.log('publicKey:', wallet.publicKey);
 
 Es de notar que la propiedad `.publicKey` retorna la versión [compresa](https://docs.ethers.org/v6/api/wallet/#HDNodeWallet-publicKey "compresa") de la public key. Esto debido a las nuevas prácticas durante el proceso de creación de las keys. Ver [referencia](https://ethereum.stackexchange.com/questions/103482/what-is-the-difference-between-compressed-and-uncompressed-public-key "referencia").
 
+### Crear una Wallet a partir de un private key generado al azar
+
+Haciendo uso del módulo [crypto](https://nodejs.org/api/crypto.html "crypto") ya incluido por defecto en NodeJS, podemos generar una private key al azar que al combinarla con el método Wallet de EthersJS, nos permite crear una billetera.
+
+```javascript
+const ethers = require('ethers');  
+const crypto = require('crypto');
+
+const id = crypto.randomBytes(32).toString('hex');
+const privateKey = "0x"+id;
+console.log("Private Key", privateKey);
+//0xafdfd9c3d2095ef696594f6cedcae59e72dcd697e2a7521b1578140422a4f890
+
+const wallet = new ethers.Wallet(privateKey);
+console.log("Address: " + wallet.address);
+//0xb794f5ea0ba39494ce839613fffba74279579268
+```
+
 ### Crear una o más wallet jerárquicas (HD wallets)
 
 
@@ -34,7 +52,7 @@ Una billetera que tiene la capacidad de generar una lista larga y casi infinita 
 Hay 2 maneras prácticas de crear una billetera HD, la primera es partiendo de una frase mnemonica ya establecida por nosotros o partiendo de una creada al azar.
 
 1. Caso en que la frase mnemonica ya está establecida
-```
+```javascript
 const ethers = require('ethers')
 const mnemonic = "announce room limb pattern dry unit scale effort smooth jazz weasel alcohol"
 const hdNode = ethers.HDNodeWallet.fromPhrase(mnemonic);
@@ -44,7 +62,7 @@ const secondAccount = hdNode.derivePath(`m/44'/60'/0'/0/1`);
 
 2.  Caso en que la frase mnemonica se genera al azar
 
-```
+```javascript
 const ethers = require('ethers')
 const wallet = ethers.Wallet.createRandom()
 const words = wallet.mnemonic.phrase;
